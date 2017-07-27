@@ -60,9 +60,9 @@ function generateJM() {
   var mylayers = layers.map((layer) => {
     // dom object, its image tag, its palette string, its palette object, (not included) pixel data
     return [layer, layer.children[0], layer.children[1].value, {}];
-  }).filter((layer) => {
+  }).filter((layer, index) => {
     // is layer.children[0].src (if empty in the document) equaling window.location.href intended behavior?
-    return (layer[1].src && layer[1].src != window.location.href || saymessage("No image")) && (layer[2] || saymessage("No palette")) && (layer[2].startsWith("GIMP Palette") || saymessage("Palette likely to be invalid"));
+    return (layer[1].src && layer[1].src != window.location.href || saymessage("Layer #" + (index+1) + " missing image")) && (layer[2] || saymessage("Layer #" + (index+1) + " missing palette")) && (layer[2].startsWith("GIMP Palette") || saymessage("Layer #" + (index+1) + " obviously invalid palette"));
   });
   console.log(mylayers);
   if (mylayers.length == 0) {
@@ -150,6 +150,7 @@ function generateJM() {
   */
 
   document.getElementById("outjm").value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(data, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
+  saymessage("Successfully created map");
 }
 /*
 function processJson(file) {
