@@ -3,6 +3,7 @@ const layers = [document.getElementById("layer1"), document.getElementById("laye
 const canvas = document.getElementById("canvas");
 const icanvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
+const say = document.getElementById("say");
 
 for (var i = 0; i < layers.length; i++) {
   let source = layers[i];
@@ -38,9 +39,14 @@ function inputPalette(file, source) {
   }
 }
 
-function sayError(error) {
-  // TODO: show in dom
-  console.log(error);
+function saymessage(msg) {
+  var element = document.createElement("span");
+  element.innerHTML = msg;
+  // element.class = "say"; // just use #say span
+  say.appendChild(element);
+  saytimeout = setTimeout(() => {
+    say.removeChild(element);
+  }, 3000);
 }
 
 function stringifyRGB(r, g, b) {
@@ -56,11 +62,11 @@ function generateJM() {
     return [layer, layer.children[0], layer.children[1].value, {}];
   }).filter((layer) => {
     // is layer.children[0].src (if empty in the document) equaling window.location.href intended behavior?
-    return (layer[1].src && layer[1].src != window.location.href || sayError("No image")) && (layer[2] || sayError("No palette")) && (layer[2].startsWith("GIMP Palette") || sayError("Palette likely to be invalid"));
+    return (layer[1].src && layer[1].src != window.location.href || saymessage("No image")) && (layer[2] || saymessage("No palette")) && (layer[2].startsWith("GIMP Palette") || saymessage("Palette likely to be invalid"));
   });
   console.log(mylayers);
   if (mylayers.length == 0) {
-    sayError("Nothing to do");
+    saymessage("Nothing to do");
     return;
   }
 

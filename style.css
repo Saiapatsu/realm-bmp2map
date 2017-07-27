@@ -8,3 +8,6 @@
   width: 100%;
   height: 20em;
 }
+#say span {
+  padding-right: 0.5em;
+}
