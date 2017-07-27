@@ -61,6 +61,7 @@ function generateJM() {
   console.log(mylayers);
   if (mylayers.length == 0) {
     sayError("Nothing to do");
+    return;
   }
 
   // parse palettes
