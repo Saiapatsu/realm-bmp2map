@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="US-ASCII">
+    <title>bmp+gpl to jm converter</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.5/pako.min.js" charset="utf-8"></script>
+    <!-- <script src="pako.min.js" charset="utf-8"></script> -->
+  </head>
+  <body>
+    <div class="imginput" id="layer1">
+      <img src="" style="float:right;" class="preimage">
+      <textarea style="float:right;" class="pregpl"></textarea>
+      Image: <input type="file" class="inimage" accept="image/*"><br>
+      Palette: <input type="file" class="ingpl">
+    </div>
+    <div class="imginput" id="layer2">
+      <img src="" style="float:right;" class="preimage">
+      <textarea style="float:right;" class="pregpl"></textarea>
+      Image: <input type="file" class="inimage" accept="image/*"><br>
+      Palette: <input type="file" class="ingpl">
+    </div>
+    <div class="imginput" id="layer3">
+      <img src="" style="float:right;" class="preimage">
+      <textarea style="float:right;" class="pregpl"></textarea>
+      Image: <input type="file" class="inimage" accept="image/*"><br>
+      Palette: <input type="file" class="ingpl">
+    </div>
+
+    <canvas id="canvas"></canvas>
+    <button type="button" id="generate" onclick="generateJM();">OH YES</button>
+    <span id="say">Messages (success/error) go here</span><br>
+    <textarea id="outjm"></textarea>
+
+    <script src="script.js" charset="utf-8"></script>
+  </body>
+</html>
