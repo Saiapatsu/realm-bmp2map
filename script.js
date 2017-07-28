@@ -20,7 +20,6 @@ for (var i = 0; i < layers.length; i++) {
 
 function inputImage(file, source) {
   if (file && file.type.match('image.*')) {
-    // console.log(file.type);
     let fr = new FileReader();
     fr.onload = function() {
       source.children[0].src = this.result;
@@ -31,7 +30,6 @@ function inputImage(file, source) {
 
 function inputPalette(file, source) {
   if (file) {
-    // console.log(file.type);
     let fr = new FileReader();
     fr.onload = function() {
       source.children[1].value = this.result;
@@ -42,38 +40,23 @@ function inputPalette(file, source) {
 
 function saymessage(msg) {
   if (!msgs[msg]) {
-    console.log("New");
     let element = document.createElement("span");
     element.innerHTML = msg;
     say.appendChild(element);
     msgs[msg] = [element];
   }
   if (msgs[msg][1]) {
-    console.log("Clearing");
     clearTimeout(msgs[msg][1]);
     msgs[msg][1] = null;
   }
-    console.log("Doing");
   msgs[msg][0].style.display = null;
   msgs[msg][1] = setTimeout(() => {
     msgs[msg][0].style.display = "none";
     msgs[msg][1] = null;
   }, 3000)
-  /*
-  var element = document.createElement("span");
-  element.innerHTML = msg;
-  // element.class = "say"; // just use #say span
-  say.appendChild(element);
-  saytimeout = setTimeout(() => {
-    say.removeChild(element);
-  }, 3000);
-  */
 }
 
 function stringifyRGB(r, g, b) {
-  // return ((r & 0xFF) << 24) + ((g & 0xFF) << 16) + ((b & 0xFF) << 8) + (a & 0xFF);
-  // return parseInt(r.toString(2) + g.toString(2) + b.toString(2) + a.toString(2), 2);
-  // return parseInt(r.toString(2).padStart(8, "0") + g.toString(2).padStart(8, "0") + b.toString(2).padStart(8, "0") + a.toString(2).padStart(8, "0"), 2);
   return r << 16 | g << 8 | b
 }
 
@@ -103,12 +86,10 @@ function generateJM() {
       sides[0] = sides[0].replace(/^ +/g,''); // leading whitespace
       sides[0] = sides[0].replace(/ +/g,' '); // duplicate whitespace
       var rgb = sides[0].split(" ");
-      // HACK
       palette[stringifyRGB(rgb[0], rgb[1], rgb[2])] = sides[1];
     }
     console.log(palette);
   }
-
 
   // get largest image size
   var width = Math.max(...mylayers.map((x) => {
@@ -155,16 +136,6 @@ function generateJM() {
       di++;
     }
   }
-  // console.log(data);
-  // console.log(dict);
-  /*
-  var data = new Uint8Array(pixData.length/CHANNELS_PER_PIXEL*2); // HACK: *2
-  var pointer = 1;
-  for (var i = 0; i < pixData.length; i += CHANNELS_PER_PIXEL, pointer += 2) {
-    data[pointer] = palette[stringifyRGB(pixData[i], pixData[i+1], pixData[i+2])];
-  }
-  console.log(data);
-  */
 
   document.getElementById("outjm").value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(data, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
   saymessage("Successfully created map");
