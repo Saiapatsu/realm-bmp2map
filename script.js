@@ -4,6 +4,7 @@ const canvas = document.getElementById("canvas");
 const icanvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 const say = document.getElementById("say");
+let msgs = {}; // list of errors encountered so far and their elements - [element, timeout]
 
 for (var i = 0; i < layers.length; i++) {
   let source = layers[i];
@@ -40,6 +41,25 @@ function inputPalette(file, source) {
 }
 
 function saymessage(msg) {
+  if (!msgs[msg]) {
+    console.log("New");
+    let element = document.createElement("span");
+    element.innerHTML = msg;
+    say.appendChild(element);
+    msgs[msg] = [element];
+  }
+  if (msgs[msg][1]) {
+    console.log("Clearing");
+    clearTimeout(msgs[msg][1]);
+    msgs[msg][1] = null;
+  }
+    console.log("Doing");
+  msgs[msg][0].style.display = null;
+  msgs[msg][1] = setTimeout(() => {
+    msgs[msg][0].style.display = "none";
+    msgs[msg][1] = null;
+  }, 3000)
+  /*
   var element = document.createElement("span");
   element.innerHTML = msg;
   // element.class = "say"; // just use #say span
@@ -47,6 +67,7 @@ function saymessage(msg) {
   saytimeout = setTimeout(() => {
     say.removeChild(element);
   }, 3000);
+  */
 }
 
 function stringifyRGB(r, g, b) {
@@ -106,11 +127,8 @@ function generateJM() {
     mylayers[i][4] = (ctx.getImageData(0, 0, width, height)).data;
   }
 
-  // initialized with 0 = empty tile
-  // var dict = ["{}"];
-  // var undict = {"{}": 0};
   var dict = [];
-  var undict = {};
+  var undict = {}; // reverse
   var oi = 1; // output array, incremented by 2 each time
   var di = 0;
   var pixlength = mylayers[0][4].length; // just in case forloop evaluates 2nd thing more than 1ce
@@ -137,9 +155,8 @@ function generateJM() {
       di++;
     }
   }
-  console.log(data);
-  console.log(dict);
-  console.log(undict);
+  // console.log(data);
+  // console.log(dict);
   /*
   var data = new Uint8Array(pixData.length/CHANNELS_PER_PIXEL*2); // HACK: *2
   var pointer = 1;
