@@ -1,13 +1,24 @@
-.imginput, #canvas {
-  border: 1px solid #000;
+#container {
+  max-width: 800px;
+  margin: auto;
 }
-#canvas {
-  display: none;
-}
-#outjm {
+#outjm, #outgpl {
   width: 100%;
   height: 20em;
 }
+/*RIP the dream*/
+/*#outjm:invalid, #outgpl:invalid, #outjm:invalid ~ #savejm, #outgpl:invalid ~ #savegpl {
+  display: none;
+}*/
 #say span {
   padding-right: 0.5em;
+}
+.gplname {
+  width: 30em;
+}
+ul:empty::after{ /* https://codepen.io/oslego/pen/tqHFf */
+  content: attr(data-empty-message);
+}
+form {
+  display: inline;
 }

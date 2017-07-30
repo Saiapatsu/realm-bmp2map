@@ -6,33 +6,32 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:image/gif;base64,R0lGODlhEAAQAOMNAFEpAPI4AFErAPI8AFEoAPI0APKVAPKRAPKZAMl+VMmAVMl8VJtiQf///////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCgAPACwAAAAAEAAQAAAER/DJd86c9cqs+a0caHXgVmoE8R1F4T3p2nJLbV+tYUj2PeW7R4/BuMQmw+LkKCHWiDxfk/FU9i7ErHUBnWi71eh3TLWRv7UIACH5BAkKAA8ALAAAAAAQABAAAARB8Mlnqpk425t7CFUXTt+ImQ8AiBamsmMiz1jJzTQJ3jPDuKsJzgfE+GTEB87IQP6UOYlv+nQyqRIrlMqdDrtcWQQAIfkEAQoADwAsAAAAABAAEAAABEbwPUSRvPhWmzsdA4WJGgKSEnoJwlh1rKsqdJ2aIVfbE07uDAYmdgEKV61LkBaU7DBLRfPxVAavTulRcsVStdmu+Gocd2kRADs=" type="image/gif">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.5/pako.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js" charset="utf-8"></script>
     <!-- <script src="pako.min.js" charset="utf-8"></script> -->
   </head>
-  <body>
-    <div class="imginput" id="layer1">
-      <img src="" style="float:right;" class="preimage">
-      <textarea style="float:right;" class="pregpl"></textarea>
-      Image: <input type="file" class="inimage" accept="image/*"><br>
-      Palette: <input type="file" class="ingpl">
-    </div>
-    <div class="imginput" id="layer2">
-      <img src="" style="float:right;" class="preimage">
-      <textarea style="float:right;" class="pregpl"></textarea>
-      Image: <input type="file" class="inimage" accept="image/*"><br>
-      Palette: <input type="file" class="ingpl">
-    </div>
-    <div class="imginput" id="layer3">
-      <img src="" style="float:right;" class="preimage">
-      <textarea style="float:right;" class="pregpl"></textarea>
-      Image: <input type="file" class="inimage" accept="image/*"><br>
-      Palette: <input type="file" class="ingpl">
-    </div>
-
-    <canvas id="canvas"></canvas>
-    <button type="button" id="generate" onclick="generateJM();">OH YES</button>
+  <body>Sorry bud, this is an HTML5 application and requires Javascript to run.<div id="container">
+    <h1>Image and palette to Realm of the Mad God JSON map converter</h1>
+    <a href="https://nillysrealm.com/topic/20762/bmp-gpl2jm-convert-images-to-rotmg-maps">Forum thread with information and instructions</a>
+    <h2>Input</h2>
+    <form><input id="input" type="file" multiple="multiple" onchange="fileInput()"></form><br>
+    <button type="button" onclick="clearInput();">Clear</button><br>
+    <button type="button" onclick="reloadInput();">Reload</button>
+    <p>Load images and palettes here. You may drag and drop and pick multiple files (provided that your browser is fairly recent)<br>
+    The Clear button clears all palettes and images. Use it whenever you load a duplicate image or want to start over.<br>
+    The Reload button reloads all the files inserted since the last clear. Use it whenever you change a file and want to try again.</p>
+    <h2>Palette</h2>
+    <ul id="pregpl" data-empty-message="No palettes loaded"><li><input type="color"><input type="text" value="" class="gplname"><button type="button">x</button></li></ul>
+    <button type="button" onclick="newColor();">Add color</button>
+    <h2>Image preview</h2>
+    <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""></li></ul>
+    <h2>Output</h2>
     <span id="say"></span><br>
+    <button type="button" onclick="renderJm();">Render map</button>
+    <button type="button" onclick="renderGpl();">Render palette</button>
+    <button type="button" id="savejm" onclick="saveJm();">Save map</button>
+    <button type="button" id="savegpl" onclick="saveGpl();">Save palette</button>
     <textarea id="outjm"></textarea>
-
+    <textarea id="outgpl"></textarea>
     <script src="script.js" charset="utf-8"></script>
-  </body>
+  </div></body>
 </html>

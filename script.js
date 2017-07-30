@@ -1,44 +1,107 @@
+// Input and previews
+const input = document.getElementById("input");
+const pregpl = document.getElementById("pregpl");
+const prebmp = document.getElementById("prebmp");
+const cpygpl = pregpl.removeChild(pregpl.firstChild);
+const cpybmp = prebmp.removeChild(prebmp.firstChild);
+const form = input.parentElement;
+let allfiles = []; // contains all files put in the input
+
+// Working canvas
 const CHANNELS_PER_PIXEL = 4; //rgba
-const layers = [document.getElementById("layer1"), document.getElementById("layer2"), document.getElementById("layer3")]; //, document.getElementById("walls"), document.getElementById("objects")]
-const canvas = document.getElementById("canvas");
-const icanvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext('2d');
+
+// Reporter
 const say = document.getElementById("say");
-let msgs = {}; // list of errors encountered so far and their elements - [element, timeout]
+let msgs = {}; // list of messages encountered so far and their elements - key: msg string, value: [node, timeout]
+// TODO: clean it out when timeout expires, add a counter, add specifiable color
 
-for (var i = 0; i < layers.length; i++) {
-  let source = layers[i];
-  inputImage(source.children[2].files[0], source);
-  inputPalette(source.children[4].files[0], source);
-  source.children[2].addEventListener("change", function() {
-    inputImage(source.children[2].files[0], source);
-  });
-  source.children[4].addEventListener("change", function() {
-    inputPalette(source.children[4].files[0], source);
-  });
-}
+// Output
+const outjm = document.getElementById("outjm")
+const outgpl = document.getElementById("outgpl")
 
-function inputImage(file, source) {
-  if (file && file.type.match('image.*')) {
-    let fr = new FileReader();
-    fr.onload = function() {
-      source.children[0].src = this.result;
-    };
-    fr.readAsDataURL(file);
+function clearInput(reload) {
+  while (pregpl.firstChild) {
+    pregpl.removeChild(pregpl.firstChild);
+  }
+  while (prebmp.firstChild) {
+    prebmp.removeChild(prebmp.firstChild);
+  }
+  if (!reload) {
+    allfiles = [];
+    form.reset();
+    outjm.value = "";
+    outgpl.value = "";
   }
 }
 
-function inputPalette(file, source) {
-  if (file) {
-    let fr = new FileReader();
-    fr.onload = function() {
-      source.children[1].value = this.result;
-    };
-    fr.readAsText(file);
-  }
+function reloadInput() {
+  clearInput(true);
+  fileInput(true);
 }
 
-function saymessage(msg) {
+function fileInput(reload) {
+  let files;
+  if (reload) {
+    files = allfiles;
+    // TODO: call the reset function
+  } else {
+    files = input.files;
+    allfiles.push.apply(allfiles, files); // push the contents of files to allfiles
+  }
+  for (let f = 0; f < files.length; f++) {
+    let file = files[f];
+    let fr = new FileReader();
+    if (file.type.match("image.*")) {
+      fr.onload = function() {
+        let image = cpybmp.cloneNode(true);
+        image.firstChild.src = this.result;
+        prebmp.appendChild(image);
+      };
+      fr.readAsDataURL(file);
+    } else {
+      fr.onload = function() {
+        if (this.result.startsWith("GIMP Palette\n")) {
+          let lines = this.result.split("\n");
+          lines.pop(); // trailing newline
+          let i = 1;
+          while (lines[i] != "#" && i < lines.length) {i++;}
+          for (i = i+1; i < lines.length; i++) {
+            newColor(lines[i]);
+          }
+        } else {
+          sayMessage(file.name + " is neither an image nor a palette");
+        }
+      };
+      fr.readAsText(file);
+    }
+  }
+}
+fileInput();
+
+function newColor(line) {
+  // create an entry in the document
+  let color = cpygpl.cloneNode(true);
+  if (line) {
+    // example line input:
+    //  58  86 110	"ground":"Blue Closed"
+    // 154  27  27	"regions":[{"id":"Arena Central Spawn"}]
+    let sides = line.split("\t");
+    sides[0] = sides[0].replace(/^ +/g,'').replace(/ +/g,' '); // leading and duplicate whitespace
+    let rgb = sides[0].split(" ");
+    // convert to hex
+    color.children[0].value = RGBHex(...rgb);
+    color.children[1].value = sides[1];
+  }
+  color.lastChild.addEventListener("click", () => {
+    pregpl.removeChild(color);
+  });
+  pregpl.appendChild(color);
+}
+
+function sayMessage(msg) {
+  console.log(msg);
   if (!msgs[msg]) {
     let element = document.createElement("span");
     element.innerHTML = msg;
@@ -56,114 +119,156 @@ function saymessage(msg) {
   }, 3000)
 }
 
-function stringifyRGB(r, g, b) {
-  return r << 16 | g << 8 | b
+// function RGB24(r, g, b) {
+//   return r << 16 | g << 8 | b
+// }
+
+function RGBHex() {
+  let hex = "#";
+  for (var i = 0; i < arguments.length; i++) {
+    let dec = parseInt(arguments[i]);
+    hex += dec < 16 ? "0" + dec.toString(16) : dec.toString(16);
+  }
+  return hex;
 }
 
-function generateJM() {
-  var mylayers = layers.map((layer) => {
-    // dom object, its image tag, its palette string, its palette object, (not included) pixel data
-    return [layer, layer.children[0], layer.children[1].value, {}];
-  }).filter((layer, index) => {
-    // is layer.children[0].src (if empty in the document) equaling window.location.href intended behavior?
-    return (layer[1].src && layer[1].src != window.location.href || saymessage("Layer #" + (index+1) + " missing image")) && (layer[2] || saymessage("Layer #" + (index+1) + " missing palette")) && (layer[2].startsWith("GIMP Palette") || saymessage("Layer #" + (index+1) + " obviously invalid palette"));
-  });
-  console.log(mylayers);
-  if (mylayers.length == 0) {
-    saymessage("Nothing to do");
+// Hex24 used to be here but it's a one line wonder used only once
+
+// HexRGB is in the gpl saver
+
+function renderJm() {
+  // sanity checks
+  if (!pregpl.firstChild) {
+    sayMessage("No palettes loaded");
+    return;
+  }
+  if (!prebmp.firstChild) {
+    sayMessage("No images loaded");
     return;
   }
 
-  // parse palettes
-  for (var j = 0; j < mylayers.length; j++) {
-    var palette = mylayers[j][3]; // key: rgb, value: tile info
-    var lines = mylayers[j][2].split("\n");
-    lines.pop(); // trailing newline
-    var i = 0
-    while (lines[i] != "#" && i < lines.length) {i++;}
-    for (var i = i+1; i < lines.length; i++) {
-      var sides = lines[i].split("\t");
-      sides[0] = sides[0].replace(/^ +/g,''); // leading whitespace
-      sides[0] = sides[0].replace(/ +/g,' '); // duplicate whitespace
-      var rgb = sides[0].split(" ");
-      palette[stringifyRGB(rgb[0], rgb[1], rgb[2])] = sides[1];
-    }
-    console.log(palette);
-  }
-
   // get largest image size
-  var width = Math.max(...mylayers.map((x) => {
-    return x[1].width;
+  let images = prebmp.children;
+  const width = Math.max(...Array.map(images, (x) => {
+    return x.firstChild.width;
   }));
-  var height = Math.max(...mylayers.map((x) => {
-    return x[1].height;
+  const height = Math.max(...Array.map(images, (x) => {
+    return x.firstChild.height;
   }));
+  canvas.width = width;
+  canvas.height = height;
 
-  var ctx = icanvas.getContext('2d');
-  for (var i = 0; i < mylayers.length; i++) {
-    let img = mylayers[i][1];
-    icanvas.width = width;
-    icanvas.height = height;
-    ctx.drawImage(img, 0, 0);
-    mylayers[i][4] = (ctx.getImageData(0, 0, width, height)).data;
+  // load image data array
+  images = Array.map(images, (image) => {
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(image.firstChild, 0, 0);
+    return ctx.getImageData(0, 0, width, height).data;
+  });
+
+  // load palettes
+  let palette = {};
+  for (var i = 0; i < pregpl.children.length; i++) {
+    palette[parseInt(pregpl.children[i].children[0].value.slice(1), 16)] = pregpl.children[i].children[1].value;
   }
 
-  var dict = [];
-  var undict = {}; // reverse
-  var oi = 1; // output array, incremented by 2 each time
-  var di = 0;
-  var pixlength = mylayers[0][4].length; // just in case forloop evaluates 2nd thing more than 1ce
-  var data = new Uint8Array(pixlength/CHANNELS_PER_PIXEL*2);
-  for (var i = 0; i < pixlength; i += CHANNELS_PER_PIXEL, oi += 2) {
-    var concat = [];
-    for (var j = 0; j < mylayers.length; j++) {
-      var pixData = mylayers[j][4];
-      if (pixData[i+3]) {
-        var color = stringifyRGB(pixData[i], pixData[i+1], pixData[i+2]);
-        var result = mylayers[j][3][color];
-        if (result) {
-          concat.push(result);
+  // Read images and palettes
+  let dict = [];
+  let undict = {}; // reverse
+  let pixlength = width*height*CHANNELS_PER_PIXEL; // just in case forloop evaluates 2nd expression more than 1ce
+  let bytedata = new Uint8Array(pixlength/CHANNELS_PER_PIXEL*2);
+  // i: current bitmap data index - +0: red, +1: green, +2: blue, +3: alpha
+  for (let i = 0; i < pixlength; i += CHANNELS_PER_PIXEL) {
+    let tile = []; // tile definitions, i.e. the stuff in the palette color names
+    for (let j = 0; j < images.length; j++) {
+      let pixdata = images[j];
+      if (pixdata[i+3]) {
+        let color = pixdata[i] << 16 | pixdata[i+1] << 8 | pixdata[i+2]; // RGB24
+        if (palette[color]) {
+          tile.push(palette[color]);
+        } else {
+          sayMessage("Color " + RGBHex(pixdata[i], pixdata[i+1], pixdata[i+2]) + " not found on the palette, ignored");
         }
       }
     }
-    concat = "{" + concat.join() + "}";
-    var key = undict[concat];
+    tile = "{" + tile.join() + "}";
+    let key = undict[tile];
     if (key != null) {
-      data[oi] = key;
+      bytedata[(i >> 1) + 1] = key; // >> 1 divides by 2 (which is 2 to the power of 1), and we know our i is always even. thanks for reading my code
     } else {
-      dict.push(concat);
-      data[oi] = undict[concat] = di;
-      di++;
+      bytedata[(i >> 1) + 1] = undict[tile] = dict.push(tile) - 1;
     }
   }
-
-  document.getElementById("outjm").value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(data, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
-  saymessage("Successfully created map");
+  if (dict.length == 1 && dict[0] == "{}") {
+    // This would a perfectly valid map but let's call the user a joker anyway
+    sayMessage("None of the colors in the palette match any of the colors in any of the images, you fucking joker");
+  } else {
+    sayMessage("Successfully rendered map");
+    outjm.value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
+    outjm.select();
+  }
 }
+
+function renderGpl() {
+  let gpl = "GIMP Palette\n#\n"
+  let pad = "    "
+  for (var i = 0; i < pregpl.children.length; i++) {
+    let color = parseInt(pregpl.children[i].children[0].value.slice(1), 16);
+    // & is of lower precedence than <<>>
+    let byte = (color & 255 << 16) >> 16;
+    gpl += pad.slice(1).slice(byte.toString().length) + byte;
+    byte = (color & 255 << 8) >> 8;
+    gpl += pad.slice(byte.toString().length) + byte;
+    byte = color & 255;
+    gpl += pad.slice(byte.toString().length) + byte;
+    gpl += "\t" + pregpl.children[i].children[1].value + "\n";
+  }
+  sayMessage("Successfully generated palette");
+  outgpl.value = gpl;
+  outgpl.select();
+}
+
+function saveJm() {
+  if (!outjm.value) {
+    renderJm();
+  }
+  if (outjm.value) {
+    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), "map.jm");
+  }
+}
+
+function saveGpl() {
+  if (!outgpl.value) {
+    renderGpl();
+  }
+  if (outgpl.value) {
+    saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), "palette.gpl");
+  }
+}
+
 /*
 function processJson(file) {
   // Parse map file
-  var jsonmap = JSON.parse(file);
+  let jsonmap = JSON.parse(file);
 
   // Get some base64 encoded binary data from the file:
-  var b64Data = jsonmap.data;
+  let b64Data = jsonmap.data;
 
   // Decode base64 (convert ascii to binary)
-  var strData = atob(b64Data);
+  let strData = atob(b64Data);
 
   // Convert binary string to character-number array
-  var charData = strData.split("").map(function(x){return x.charCodeAt(0);});
+  let charData = strData.split("").map(function(x){return x.charCodeAt(0);});
 
   // Turn number array into byte-array
-  var binData = new Uint8Array(charData);
+  let binData = new Uint8Array(charData);
 
   // Pako magic
-  var data = pako.inflate(binData);
+  let data = pako.inflate(binData);
 
   // Check reverse
-  var strData2 = pako.deflate(data, {to: "string", level: "9"});
+  let strData2 = pako.deflate(data, {to: "string", level: "9"});
 
-  var b64Data2 = btoa(strData2);
+  let b64Data2 = btoa(strData2);
 
   // Output to console
   console.log(file);
@@ -176,3 +281,6 @@ function processJson(file) {
   console.log("b642", b64Data2);
 }
 */
+
+// We have JS!
+document.body.removeChild(document.body.firstChild);
