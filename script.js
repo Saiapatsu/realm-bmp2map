@@ -168,11 +168,18 @@ function renderJm() {
   canvas.height = height;
 
   // load image data array
-  images = Array.map(images, (image) => {
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(image.firstChild, 0, 0);
-    return ctx.getImageData(0, 0, width, height).data;
-  });
+  // 2018-10-08 19:57:07 Stopped using Array.map on htmlcollection
+  images = (() => { // create an anonymous function, run it and set variable
+                    //"images" to point to the function's return value, which is
+                    // a new, writeable array
+    var spaghetticode = [];
+    for (i = 0; i < images.length; i++) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(images[i].firstChild, 0, 0);
+        spaghetticode.push(ctx.getImageData(0, 0, width, height).data);
+    }
+    return spaghetticode;
+  })();
 
   // load palettes
   let palette = {};
@@ -208,9 +215,9 @@ function renderJm() {
       bytedata[(i >> 1) + 1] = undict[tile] = dict.push(tile) - 1;
     }
   }
-  if (dict.length == 1 && dict[0] == "{}") {
-    // This would a perfectly valid map but let's call the user a joker anyway
-    sayMessage("None of the colors in the palette match any of the colors in any of the images, you fucking joker");
+  if (dict.length === 1 && dict[0] == "{}") {
+    // This would a perfectly valid map but let's gawk anyway
+    sayMessage("Something ain't right, none of the colors in the palette match any of the colors in any of the images");
   } else {
     sayMessage("Successfully rendered map");
     outjm.value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
