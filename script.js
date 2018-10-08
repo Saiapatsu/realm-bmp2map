@@ -8,7 +8,7 @@ const form = input.parentElement;
 let allfiles = []; // contains all files put in the input
 
 // Working canvas
-const CHANNELS_PER_PIXEL = 4; //rgba
+const CHANNELS_PER_PIXEL = 4; // RGBA
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext('2d');
 
@@ -136,6 +136,15 @@ function RGBHex() {
 
 // HexRGB is in the gpl saver
 
+// function setData(to, data, i) {
+//   if (data > 255) {
+//     to[i] = data & 65280;
+//     to[i + 1] = data & 255;
+//   } else {
+//     to[i + 1] = data;
+//   }
+// }
+
 function renderJm() {
   // sanity checks
   if (!pregpl.firstChild) {
@@ -149,12 +158,12 @@ function renderJm() {
 
   // get largest image size
   let images = prebmp.children;
-  const width = Math.max(...Array.map(images, (x) => {
-    return x.firstChild.width;
-  }));
-  const height = Math.max(...Array.map(images, (x) => {
-    return x.firstChild.height;
-  }));
+  // 2018-10-08 19:57:07 Stopped using Array.map on htmlcollection
+  var width = 0, height = 0;
+  for (i = 0; i < images.length; i++) {
+    width = Math.max(width, images[i].firstChild.width);
+    height = Math.max(height, images[i].firstChild.height);
+  }
   canvas.width = width;
   canvas.height = height;
 
@@ -193,6 +202,7 @@ function renderJm() {
     tile = "{" + tile.join() + "}";
     let key = undict[tile];
     if (key != null) {
+      // setData()
       bytedata[(i >> 1) + 1] = key; // >> 1 divides by 2 (which is 2 to the power of 1), and we know our i is always even. thanks for reading my code
     } else {
       bytedata[(i >> 1) + 1] = undict[tile] = dict.push(tile) - 1;
@@ -209,13 +219,13 @@ function renderJm() {
 }
 
 function renderGpl() {
-  let gpl = "GIMP Palette\n#\n"
-  let pad = "    "
+  let gpl = "GIMP Palette\n#\n";
+  let pad = "    ";
   for (var i = 0; i < pregpl.children.length; i++) {
     let color = parseInt(pregpl.children[i].children[0].value.slice(1), 16);
     // & is of lower precedence than <<>>
     let byte = (color & 255 << 16) >> 16;
-    gpl += pad.slice(1).slice(byte.toString().length) + byte;
+    gpl += pad.slice(byte.toString().length + 1) + byte;
     byte = (color & 255 << 8) >> 8;
     gpl += pad.slice(byte.toString().length) + byte;
     byte = color & 255;
