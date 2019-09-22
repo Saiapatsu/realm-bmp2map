@@ -219,9 +219,15 @@ function renderJm() {
     // This would a perfectly valid map but let's gawk anyway
     sayMessage("Something ain't right, none of the colors in the palette match any of the colors in any of the images");
   } else {
-    sayMessage("Successfully rendered map");
-    outjm.value = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
-    outjm.select();
+    let tempjm = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
+    try {
+		JSON.parse(tempjm);
+		sayMessage("Successfully rendered map");
+	} catch(e) {
+		sayMessage("JSON is malformed, check your color names");
+	}
+	outjm.value = tempjm;
+	outjm.select();
   }
 }
 
