@@ -89,7 +89,7 @@ https://saiapatsu.github.io/realm-bmp2map/example.zip</pre>
     </script>
     <h2>Input</h2>
     <form><input id="input" type="file" multiple="multiple" onchange="fileInput()"></form><br>
-    <button type="button" onclick="clearInput();">Clear</button><br>
+    <button type="button" onclick="clearInput('all');">Clear</button><br>
     <button type="button" onclick="reloadInput();">Reload</button>
     <p>Load images and palettes here. You may drag and drop and pick multiple files (provided that your browser is fairly recent)<br>
     The Clear button clears all palettes and images. Use it whenever you load a duplicate image or want to start over.<br>
@@ -97,8 +97,10 @@ https://saiapatsu.github.io/realm-bmp2map/example.zip</pre>
     <h2>Palette</h2>
     <ul id="pregpl" data-empty-message="No palettes loaded"><li><input type="color"><input type="text" value="" class="gplname"><button type="button">x</button></li></ul>
     <button type="button" onclick="newColor();">Add color</button>
+    <button type="button" onclick="clearInput('palette');">Clear Palette</button><br>
     <h2>Image preview</h2>
     <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""></li></ul>
+    <button type="button" onclick="clearInput('images');">Clear Images</button><br>
     <h2>Output</h2>
     <span id="say"></span><br>
     <button type="button" id="savejm" onclick="saveJm();">Save map</button>

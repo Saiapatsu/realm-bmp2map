@@ -21,14 +21,18 @@ let msgs = {}; // list of messages encountered so far and their elements - key: 
 const outjm = document.getElementById("outjm")
 const outgpl = document.getElementById("outgpl")
 
-function clearInput(reload) {
-  while (pregpl.firstChild) {
-    pregpl.removeChild(pregpl.firstChild);
+function clearInput(intent) {
+  if (intent != "images") { // rigid and inextensible, just like the rest of this project
+    while (pregpl.firstChild) {
+      pregpl.removeChild(pregpl.firstChild);
+    }
   }
-  while (prebmp.firstChild) {
-    prebmp.removeChild(prebmp.firstChild);
+  if (intent != "palette") { // rigid and inextensible, just like the rest of this project
+    while (prebmp.firstChild) {
+      prebmp.removeChild(prebmp.firstChild);
+    }
   }
-  if (!reload) {
+  if (intent === "all") {
     allfiles = [];
     form.reset();
     outjm.value = "";
@@ -37,7 +41,7 @@ function clearInput(reload) {
 }
 
 function reloadInput() {
-  clearInput(true);
+  clearInput('reload');
   fileInput(true);
 }
 
