@@ -61,6 +61,9 @@ function fileInput(reload) {
       fr.onload = function() {
         let image = cpybmp.cloneNode(true);
         image.firstChild.src = this.result;
+		  image.lastChild.addEventListener("click", () => {
+			prebmp.removeChild(image);
+		  });
         prebmp.appendChild(image);
       };
       fr.readAsDataURL(file);

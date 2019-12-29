@@ -95,13 +95,13 @@ Columns: 0
     <button type="button" onclick="reloadInput();">Reload</button>
     <p>Load images and palettes here. You may drag and drop and pick multiple files (provided that your browser is fairly recent)<br>
     The Clear buttons clear palettes and images. Use it whenever you load a duplicate image or want to start over.<br>
-    The Reload button reloads all the files inserted since the last clear. Use it whenever you change a file and want to try again.</p>
+    The Reload button reloads all the files inserted since the last full clear. Use it whenever you change a file and want to try again.</p>
     <h2>Palette</h2>
     <ul id="pregpl" data-empty-message="No palettes loaded"><li><input type="color"><input type="text" value="" class="gplname"><button type="button">x</button></li></ul>
     <button type="button" onclick="newColor();">Add color</button>
     <button type="button" onclick="clearInput('palette');">Clear Palette</button><br>
     <h2>Image preview</h2>
-    <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""></li></ul>
+    <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""><button type="button">x</button></li></ul>
     <button type="button" onclick="clearInput('images');">Clear Images</button><br>
     <h2>Output</h2>
     <span id="say"></span><br>
