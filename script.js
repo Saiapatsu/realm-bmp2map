@@ -288,7 +288,7 @@ function saveJm() {
   outjm.value = "";
   renderJm();
   if (outjm.value) {
-    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), outfilename.innerText || "map.jm");
+    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), (outfilename.innerText + ".jm") || "map.jm");
 	renderFilename(true) // if filename had count in it, increase it
   }
 }
@@ -297,7 +297,8 @@ function saveGpl() {
   outgpl.value = "";
   renderGpl();
   if (outgpl.value) {
-    saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), "palette.gpl");
+    saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), (outfilename.innerText + ".gpl") || "palette.gpl");
+	// does NOT count up
   }
 }
 
