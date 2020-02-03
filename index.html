@@ -104,11 +104,14 @@ Columns: 0
     <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""><button type="button">x</button></li></ul>
     <button type="button" onclick="clearInput('images');">Clear images</button><br>
     <h2>Output</h2>
+	<form>Filename: <input type="text" id="filename" style="width:20em;" value="map %f %n"/><span id="filenamePreview"/></form><br/>
     <button type="button" id="savejm" onclick="saveJm();">Save map</button>
     <button type="button" id="savegpl" onclick="saveGpl();">Save palette</button>
-    <span id="say"></span><br>
     <button type="button" onclick="renderJm();">Render map</button>
     <button type="button" onclick="renderGpl();">Render palette</button>
+    <br>
+    <span id="say"></span>
+    <br>
     <textarea id="outjm"></textarea>
     <textarea id="outgpl"></textarea>
     <script src="script.js" charset="utf-8"></script>
