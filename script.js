@@ -18,8 +18,11 @@ let msgs = {}; // list of messages encountered so far and their elements - key: 
 // TODO: clean it out when timeout expires, add a counter, add specifiable color
 
 // Output
+const infilename = document.getElementById("filename")
+const outfilename = document.getElementById("filenamePreview")
 const outjm = document.getElementById("outjm")
 const outgpl = document.getElementById("outgpl")
+let count = 1;
 
 function clearInput(intent) {
   if (intent != "images") { // rigid and inextensible, just like the rest of this project
@@ -257,12 +260,35 @@ function renderGpl() {
   outgpl.select();
 }
 
+function renderFilename(increase) {
+	// get #filename.value
+	// substitute file list and increasing number
+	// save to #filenamePreview
+	const countCopy = increase ? count + 1 : count;
+	outfilename.innerText = infilename.value.replace(/%[n%]/g,(match)=>{
+		if (match == "%n") {
+			if (increase) {
+				count = countCopy; // we've used the count, so save it now
+			}
+			return countCopy;
+		/*
+		} else if (match == "%f") {
+			return allfiles.map((file)=>{
+				return file.name
+			}).join(" ")
+		*/ // this is where the massive code debt of this fucked me over. not that it's impossible but I'm getting too disgusted to put a filename on each of the images so I can know their filenames
+		} else {
+			return "%";
+		}
+	});
+}
+renderFilename(false)
+
 function saveJm() {
-  if (!outjm.value) {
-    renderJm();
-  }
+  renderJm();
   if (outjm.value) {
-    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), "map.jm");
+    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), outfilename.innerText || "map.jm");
+	renderFilename(true) // if filename had count in it, increase it
   }
 }
 
@@ -314,3 +340,4 @@ function processJson(file) {
 
 // We have JS!
 document.body.removeChild(document.body.firstChild);
+
