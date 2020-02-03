@@ -285,6 +285,7 @@ function renderFilename(increase) {
 renderFilename(false)
 
 function saveJm() {
+  outjm.value = "";
   renderJm();
   if (outjm.value) {
     saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), outfilename.innerText || "map.jm");
@@ -293,9 +294,8 @@ function saveJm() {
 }
 
 function saveGpl() {
-  if (!outgpl.value) {
-    renderGpl();
-  }
+  outgpl.value = "";
+  renderGpl();
   if (outgpl.value) {
     saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), "palette.gpl");
   }
