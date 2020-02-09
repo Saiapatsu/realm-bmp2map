@@ -18,11 +18,10 @@ let msgs = {}; // list of messages encountered so far and their elements - key: 
 // TODO: clean it out when timeout expires, add a counter, add specifiable color
 
 // Output
-const infilename = document.getElementById("filename")
-const outfilename = document.getElementById("filenamePreview")
+const filenamein = document.getElementById("filename")
+const filenameindex = document.getElementById("filenameIndex")
 const outjm = document.getElementById("outjm")
 const outgpl = document.getElementById("outgpl")
-let count = 1;
 
 function clearInput(intent) {
   if (intent != "images") { // rigid and inextensible, just like the rest of this project
@@ -263,14 +262,14 @@ function renderGpl() {
 function renderFilename(increase) {
 	// get #filename.value
 	// substitute file list and increasing number
-	// save to #filenamePreview
-	const countCopy = increase ? count + 1 : count;
-	outfilename.innerText = infilename.value.replace(/%[n%]/g,(match)=>{
+	const index = parseInt(filenameIndex.value);
+	const indexCopy = increase ? index + 1 : index;
+	return filenamein.value.replace(/%[n%]/g,(match)=>{
 		if (match == "%n") {
 			if (increase) {
-				count = countCopy; // we've used the count, so save it now
+				filenameIndex.value = indexCopy; // we've used the count, so save it now
 			}
-			return countCopy;
+			return index;
 		/*
 		} else if (match == "%f") {
 			return allfiles.map((file)=>{
@@ -282,14 +281,12 @@ function renderFilename(increase) {
 		}
 	});
 }
-renderFilename(false)
 
 function saveJm() {
   outjm.value = "";
   renderJm();
   if (outjm.value) {
-    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), (outfilename.innerText + ".jm") || "map.jm");
-	renderFilename(true) // if filename had count in it, increase it
+    saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), (renderFilename(true) + ".jm") || "map.jm");
   }
 }
 
@@ -297,8 +294,7 @@ function saveGpl() {
   outgpl.value = "";
   renderGpl();
   if (outgpl.value) {
-    saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), (outfilename.innerText + ".gpl") || "palette.gpl");
-	// does NOT count up
+    saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), (renderFilename(false) + ".gpl") || "palette.gpl"); // does not increase index
   }
 }
 
