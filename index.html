@@ -12,7 +12,6 @@
 <body>
 <div id="container">
 	<h1>Image and palette to Realm of the Mad God JSON map converter</h1>
-	<a id="showInstructions" href="#">Show instructions</a><br>
 	<div id="instructions" style="display: none;">
 	<p>There are 2 parts to a map made with this tool: a palette, and images that
 	use colors exclusively from the palette. There can be any number of images, but
@@ -71,6 +70,8 @@ Columns: 0
 	<p>https://nillysrealm.com/topic/20762/bmp-gpl2jm-convert-images-to-rotmg-maps</p>
 	<p>Example files - extract and use as prescribed for a demo:</p>
 	<p><a href="https://saiapatsu.github.io/realm-bmp2map/example.zip">https://saiapatsu.github.io/realm-bmp2map/example.zip</a></p>
+	</div>
+	<a id="showInstructions" href="#">Show instructions</a><br>
 	<script>
 		const instructions = document.getElementById("instructions");
 		const button = document.getElementById("showInstructions");
@@ -89,7 +90,6 @@ Columns: 0
 			}
 		});
 	</script>
-	</div>
 	<div id="sectionInput">
 		<h2>Input</h2>
 		<form><input id="input" type="file" multiple="multiple" onchange="fileInput()"></form><br>
