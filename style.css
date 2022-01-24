@@ -1,24 +1,24 @@
 #container {
-  max-width: 800px;
-  margin: auto;
+	max-width: 800px;
+	margin: auto;
 }
 #outjm, #outgpl {
-  width: 100%;
-  height: 20em;
+	width: 100%;
+	height: 20em;
 }
 /*RIP the dream*/
 /*#outjm:invalid, #outgpl:invalid, #outjm:invalid ~ #savejm, #outgpl:invalid ~ #savegpl {
-  display: none;
+	display: none;
 }*/
 #say span {
-  padding-right: 0.5em;
+	padding-right: 0.5em;
 }
 .gplname {
-  width: 30em;
+	width: 30em;
 }
 ul:empty::after{ /* https://codepen.io/oslego/pen/tqHFf */
-  content: attr(data-empty-message);
+	content: attr(data-empty-message);
 }
 form {
-  display: inline;
+	display: inline;
 }

@@ -1,119 +1,128 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="US-ASCII">
-    <title>bmp+gpl to jm converter</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/gif;base64,R0lGODlhEAAQAOMNAFEpAPI4AFErAPI8AFEoAPI0APKVAPKRAPKZAMl+VMmAVMl8VJtiQf///////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCgAPACwAAAAAEAAQAAAER/DJd86c9cqs+a0caHXgVmoE8R1F4T3p2nJLbV+tYUj2PeW7R4/BuMQmw+LkKCHWiDxfk/FU9i7ErHUBnWi71eh3TLWRv7UIACH5BAkKAA8ALAAAAAAQABAAAARB8Mlnqpk425t7CFUXTt+ImQ8AiBamsmMiz1jJzTQJ3jPDuKsJzgfE+GTEB87IQP6UOYlv+nQyqRIrlMqdDrtcWQQAIfkEAQoADwAsAAAAABAAEAAABEbwPUSRvPhWmzsdA4WJGgKSEnoJwlh1rKsqdJ2aIVfbE07uDAYmdgEKV61LkBaU7DBLRfPxVAavTulRcsVStdmu+Gocd2kRADs=" type="image/gif">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.5/pako.min.js" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js" charset="utf-8"></script>
-    <!-- <script src="pako.min.js" charset="utf-8"></script> -->
-  </head>
-  <body>Something's wrong, you either haven't enabled all of the Javascript for this page or there's any other kind of error.<div id="container">
-    <h1>Image and palette to Realm of the Mad God JSON map converter</h1>
-    <a id="showInstructions" href="#">Show instructions</a><br>
-    <div id="instructions" style="display: none;">
-		<p>There are 2 parts to a map made with this tool: a palette, and images that
-		use colors exclusively from the palette. There can be any number of images, but
-		there is no reason to work with more than 3.</p>
-		<p>To begin, draw the map in an image editor such as GIMP or paint.net. Always
-		use the same color for the same tile or object. It's like pixel art. Be sure to
-		split the map into at least three layers, one for the ground and possibly solid
-		walls, another for objects that should have a floor under them, such as
-		monsters, objects and tomb and cave walls, and a third layer for regions if
-		there are any.</p>
-		<p>While you're drawing the map, keep track of the colors you use and what they
-		mean, to make the palette. The palette is a text file and it looks something
-		like this:</p>
+<head>
+	<meta charset="utf-8">
+	<title>bmp+gpl to jm converter</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="icon" href="data:image/gif;base64,R0lGODlhEAAQAOMNAFEpAPI4AFErAPI8AFEoAPI0APKVAPKRAPKZAMl+VMmAVMl8VJtiQf///////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCgAPACwAAAAAEAAQAAAER/DJd86c9cqs+a0caHXgVmoE8R1F4T3p2nJLbV+tYUj2PeW7R4/BuMQmw+LkKCHWiDxfk/FU9i7ErHUBnWi71eh3TLWRv7UIACH5BAkKAA8ALAAAAAAQABAAAARB8Mlnqpk425t7CFUXTt+ImQ8AiBamsmMiz1jJzTQJ3jPDuKsJzgfE+GTEB87IQP6UOYlv+nQyqRIrlMqdDrtcWQQAIfkEAQoADwAsAAAAABAAEAAABEbwPUSRvPhWmzsdA4WJGgKSEnoJwlh1rKsqdJ2aIVfbE07uDAYmdgEKV61LkBaU7DBLRfPxVAavTulRcsVStdmu+Gocd2kRADs=" type="image/gif">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/1.0.5/pako.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js" charset="utf-8"></script>
+	<!-- <script src="pako.min.js" charset="utf-8"></script> -->
+</head>
+<body>
+<div id="container">
+	<h1>Image and palette to Realm of the Mad God JSON map converter</h1>
+	<a id="showInstructions" href="#">Show instructions</a><br>
+	<div id="instructions" style="display: none;">
+	<p>There are 2 parts to a map made with this tool: a palette, and images that
+	use colors exclusively from the palette. There can be any number of images, but
+	there is no reason to work with more than 3.</p>
+	<p>To begin, draw the map in an image editor such as GIMP or paint.net. Always
+	use the same color for the same tile or object. It's like pixel art. Be sure to
+	split the map into at least three layers, one for the ground and possibly solid
+	walls, another for objects that should have a floor under them, such as
+	monsters, objects and tomb and cave walls, and a third layer for regions if
+	there are any.</p>
+	<p>While you're drawing the map, keep track of the colors you use and what they
+	mean, to make the palette. The palette is a text file and it looks something
+	like this:</p>
 
 <pre>GIMP Palette
 Name: shrine-floor
 Columns: 0
 #
-  0   0   0	"ground":"Space"
- 34  41  56	"ground":"Blue Grass"
- 22  22  29	"ground":"Castle Stone Floor Tile Dark"
- 79  79 104	"ground":"Castle Stone Floor Tile"
+0   0   0	"ground":"Space"
+34  41  56	"ground":"Blue Grass"
+22  22  29	"ground":"Castle Stone Floor Tile Dark"
+79  79 104	"ground":"Castle Stone Floor Tile"
 106  97 117	"ground":"Purple Stone"
- 82  75  91	"ground":"Cracked Purple Stone"
- 66 100 127	"objs":[{"id":"Blue Pillar"}]
- 66 127  67	"regions":[{"id":"Spawn"}]
+82  75  91	"ground":"Cracked Purple Stone"
+66 100 127	"objs":[{"id":"Blue Pillar"}]
+66 127  67	"regions":[{"id":"Spawn"}]
 127 108  66	"regions":[{"id":"Arena Edge Spawn"}]
 127  66  66	"regions":[{"id":"Arena Central Spawn"}]</pre>
 
-		<p>The file must start with "GIMP Palette" and a newline. Anything between it
-		and the first # is metadata that's only useful if you're editing the palette in
-		GIMP. Each line following it contains 3 numbers 0-255 separated by at least one
-		space that make up a RGB color, a tab (not a space) and a piece of the json
-		dictionary.</p>
-		<p>Instead of making a palette file, you can manually add colors to the palette
-		with the Add Color button. You can later export the colors to a text file to be
-		reused with the Save Palette button.</p>
-		<p>Copy one of the lines and edit its color and ground/object/region name. You
-		can get a name from the map editor or the game's XML. Use the object's real name
-		that's on the same line as its unique type.</p>
-		<p>When you're done drawing the map and writing the palette, save all the map's
-		layers and the palette in the same folder for convenience and drag and drop them
-		all into the button under Input to import them. Your palettes should combine and
-		be visible, along with your images. Press Save Map to save the map as .jm and
-		then try it out in the map editor.</p>
-		<p>When a palette is imported, it goes into the big palette on the page, so it's
-		irrelevant whether you have a palette for each image, or one palette for the
-		whole image.</p>
-		<p>You _can_ have multiple objects or regions on one tile in the palette, but
-		it's not guaranteed to stay like that when loaded by a NR source server. If you
-		cover the same tile with more than one of a kind of ground, object or region,
-		the tool might not produce a valid jsonmap dictionary and the map won't be
-		valid. This is nofix until there is need for a fix, i.e. a really popular server
-		that uses this to make maps and supports multiple objects and regions on a tile.
-		<p>Original Nilly's Realm forum thread link (dead, here just to pay respects):</p>
-		<p>https://nillysrealm.com/topic/20762/bmp-gpl2jm-convert-images-to-rotmg-maps</p>
-		<p>Example files - extract and use as prescribed for a demo:</p>
-		<p><a href="https://saiapatsu.github.io/realm-bmp2map/example.zip">https://saiapatsu.github.io/realm-bmp2map/example.zip</a></p>
+	<p>The file must start with "GIMP Palette" and a newline. Anything between it
+	and the first # is metadata that's only useful if you're editing the palette in
+	GIMP. Each line following it contains 3 numbers 0-255 separated by at least one
+	space that make up a RGB color, a tab (not a space) and a piece of the json
+	dictionary.</p>
+	<p>Instead of making a palette file, you can manually add colors to the palette
+	with the Add Color button. You can later export the colors to a text file to be
+	reused with the Save Palette button.</p>
+	<p>Copy one of the lines and edit its color and ground/object/region name. You
+	can get a name from the map editor or the game's XML. Use the object's real name
+	that's on the same line as its unique type.</p>
+	<p>When you're done drawing the map and writing the palette, save all the map's
+	layers and the palette in the same folder for convenience and drag and drop them
+	all into the button under Input to import them. Your palettes should combine and
+	be visible, along with your images. Press Save Map to save the map as .jm and
+	then try it out in the map editor.</p>
+	<p>When a palette is imported, it goes into the big palette on the page, so it's
+	irrelevant whether you have a palette for each image, or one palette for the
+	whole image.</p>
+	<p>You _can_ have multiple objects or regions on one tile in the palette, but
+	it's not guaranteed to stay like that when loaded by a NR source server. If you
+	cover the same tile with more than one of a kind of ground, object or region,
+	the tool might not produce a valid jsonmap dictionary and the map won't be
+	valid. This is nofix until there is need for a fix, i.e. a really popular server
+	that uses this to make maps and supports multiple objects and regions on a tile.</p>
+	<p>Original Nilly's Realm forum thread link (dead, here just to pay respects):</p>
+	<p>https://nillysrealm.com/topic/20762/bmp-gpl2jm-convert-images-to-rotmg-maps</p>
+	<p>Example files - extract and use as prescribed for a demo:</p>
+	<p><a href="https://saiapatsu.github.io/realm-bmp2map/example.zip">https://saiapatsu.github.io/realm-bmp2map/example.zip</a></p>
+	<script>
+		const instructions = document.getElementById("instructions");
+		const button = document.getElementById("showInstructions");
+		var open = false;
+		button.addEventListener("click", (event) => {
+			event.preventDefault();
+			console.log("foo")
+			if (open === true) {
+				open = false;
+				button.innerText = "Show instructions";
+				instructions.style = "display: none;";
+			} else {
+				open = true;
+				button.innerText = "Hide instructions";
+				instructions.style = "";
+			}
+		});
+	</script>
 	</div>
-    <script>
-      const instructions = document.getElementById("instructions");
-      const button = document.getElementById("showInstructions");
-      var open = false;
-      button.addEventListener("click", (event) => {
-        event.preventDefault();
-        console.log("foo")
-        if (open === true) {
-          open = false;
-          button.innerText = "Show instructions";
-          instructions.style = "display: none;";
-        } else {
-          open = true;
-          button.innerText = "Hide instructions";
-          instructions.style = "";
-        }
-      });
-    </script>
-    <h2>Input</h2>
-    <form><input id="input" type="file" multiple="multiple" onchange="fileInput()"></form><br>
-    <button type="button" onclick="clearInput('all');">Clear All</button><br>
-    <button type="button" onclick="reloadInput();">Reload</button>
-    <p>Load images and palettes here. You may drag and drop and pick multiple files (provided that your browser is fairly recent)<br>
-    The Clear buttons clear palettes and images. Use it whenever you load a duplicate image or want to start over.<br>
-    The Reload button reloads all the files inserted since the last full clear. Use it whenever you change a file and want to try again.</p>
-    <h2>Palette</h2>
-    <ul id="pregpl" data-empty-message="No palettes loaded"><li><input type="color"><input type="text" value="" class="gplname"><button type="button">x</button></li></ul>
-    <button type="button" onclick="newColor();">Add color</button>
-    <button type="button" onclick="clearInput('palette');">Clear palette</button><br>
-    <h2>Image preview</h2>
-    <ul id="prebmp" data-empty-message="No images loaded"><li><img src=""><button type="button">x</button></li></ul>
-    <button type="button" onclick="clearInput('images');">Clear images</button><br>
-    <h2>Output</h2>
-	<form>Filename: <input type="text" id="filename" style="width:20em;" value="map %n"/><input type="text" id="filenameIndex" value="1"/></form><br/>
-    <button type="button" id="savejm" onclick="saveJm();">Save map</button>
-    <button type="button" id="savegpl" onclick="saveGpl();">Save palette</button>
-    <button type="button" onclick="renderJm();">Render map</button>
-    <button type="button" onclick="renderGpl();">Render palette</button>
-    <br>
-    <span id="say"></span>
-    <br>
-    <textarea id="outjm"></textarea>
-    <textarea id="outgpl"></textarea>
-    <script src="script.js" charset="utf-8"></script>
-  </div></body>
+	<div id="sectionInput">
+		<h2>Input</h2>
+		<form><input id="input" type="file" multiple="multiple" onchange="fileInput()"></form><br>
+		<button type="button" onclick="clearInput('all');">Clear All</button><br>
+		<button type="button" onclick="reloadInput();">Reload</button>
+		<p>Load images and palettes here. You may drag and drop and pick multiple files (provided that your browser is fairly recent)<br>
+	The Clear buttons clear palettes and images. Use it whenever you load a duplicate image or want to start over.<br>
+	The Reload button reloads all the files inserted since the last full clear. Use it whenever you change a file and want to try again.</p>
+	</div>
+	<div id="sectionPalette">
+		<h2>Palette</h2>
+		<ul id="pregpl" data-empty-message="No palettes loaded"><li><input type="color"><input type="text" value="" class="gplname"><button type="button">x</button></li></ul>
+		<button type="button" onclick="newColor();">Add color</button>
+		<button type="button" onclick="clearInput('palette');">Clear palette</button><br>
+	</div>
+	<div id="sectionImages">
+		<h2>Images</h2>
+		<ul id="prebmp" data-empty-message="No images loaded"><li><img src=""><button type="button">x</button></li></ul>
+		<button type="button" onclick="clearInput('images');">Clear images</button><br>
+	</div>
+	<div id="sectionOutput">
+		<h2>Output</h2>
+		<form>Filename: <input type="text" id="filename" style="width:20em;" value="map %n"/><input type="text" id="filenameIndex" value="1"/></form><br/>
+		<button type="button" id="savejm" onclick="saveJm();">Save map</button>
+		<button type="button" id="savegpl" onclick="saveGpl();">Save palette</button>
+		<button type="button" onclick="renderJm();">Render map</button>
+		<button type="button" onclick="renderGpl();">Render palette</button>
+		<textarea id="say" style="height: 8em; width: 100%;"></textarea>
+		<textarea id="outjm"></textarea>
+		<textarea id="outgpl"></textarea>
+		<div id="noscript"style="font-style: italic;">This tool requires Javascript to run.</div>
+		<script src="script.js" charset="utf-8"></script>
+	</div>
+</div>
+</body>
 </html>
