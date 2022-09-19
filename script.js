@@ -259,12 +259,15 @@ function renderFilename(increase) {
 	// substitute file list and increasing number
 	const index = parseInt(filenameIndex.value);
 	const indexCopy = increase ? index + 1 : index;
-	return filenamein.value.replace(/%[n%]/g,(match)=>{
+	return filenamein.value.replace(/%[dn%]/g,(match)=>{
 		if (match == "%n") {
 			if (increase) {
 				filenameIndex.value = indexCopy; // we've used the count, so save it now
 			}
 			return index;
+		} else if (match == "%d") {
+			// timestamp in seconds
+			return Math.floor(Date.now() / 1000);
 		/*
 		} else if (match == "%f") {
 			return allfiles.map((file)=>{
