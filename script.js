@@ -209,11 +209,14 @@ function renderJm() {
 		}
 		tile = "{" + tile.join() + "}";
 		let key = undict[tile];
+		const endiancoeff = document.getElementById("isLittleEndian").checked ? 0 : 1;
 		if (key != null) {
 			// setData()
-			bytedata[(i >> 1) + 1] = key; // >> 1 divides by 2 (which is 2 to the power of 1), and we know our i is always even. thanks for reading my code
+			bytedata[(i >> 1) + endiancoeff] = key; // >> 1 divides by 2 (which is 2 to the power of 1), and we know our i is always even. thanks for reading my code
+			// retro: i is always even because it is incremented by CHANNELS_PER_PIXEL
+			// we write every second byte because we're actually writing shorts
 		} else {
-			bytedata[(i >> 1) + 1] = undict[tile] = dict.push(tile) - 1;
+			bytedata[(i >> 1) + endiancoeff] = undict[tile] = dict.push(tile) - 1;
 		}
 	}
 	if (dict.length === 1 && dict[0] == "{}") {
@@ -326,6 +329,10 @@ function processJson(file) {
 	console.log("b642", b64Data2);
 }
 */
+
+function changePrefs(e) {
+	
+}
 
 // We have JS!
 document.getElementById("noscript").remove();

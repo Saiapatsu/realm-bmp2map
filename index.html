@@ -112,7 +112,14 @@ Columns: 0
 	</div>
 	<div id="sectionOutput">
 		<h2>Output</h2>
-		<form>Filename: <input type="text" id="filename" style="width:20em;" value="map %n"/><input type="text" id="filenameIndex" value="1"/></form><br/>
+		<form>
+			Filename: <input type="text" id="filename" style="width:20em;" value="map %n" oninput="changePrefs(e);"/>
+			<br>
+			Index: <input type="text" id="filenameIndex" value="1"/>
+			<br>
+			<input type="checkbox" id="isLittleEndian" value="0" oninput="changePrefs(e);"/><label for="isLittleEndian">Little-endian (hi fiow and zem!)</label>
+		</form>
+		<br>
 		<button type="button" id="savejm" onclick="saveJm();">Save map</button>
 		<button type="button" id="savegpl" onclick="saveGpl();">Save palette</button>
 		<button type="button" onclick="renderJm();">Render map</button>
