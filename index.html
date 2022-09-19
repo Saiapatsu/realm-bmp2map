@@ -113,11 +113,11 @@ Columns: 0
 	<div id="sectionOutput">
 		<h2>Output</h2>
 		<form>
-			Filename: <input type="text" id="filename" style="width:20em;" value="map %d %n" oninput="changePrefs(e);"/>
+			Filename: <input type="text" id="filename" style="width:20em;" value="map %d %n" oninput="changePrefsEvent(event, 'map %d %n');"/>
 			<br>
-			Index: <input type="text" id="filenameIndex" value="1"/>
+			Index: <input type="text" id="filenameIndex" value="1" oninput="changePrefsEvent(event, '1');"/>
 			<br>
-			<input type="checkbox" id="isLittleEndian" value="0" oninput="changePrefs(e);"/><label for="isLittleEndian">Little-endian (hi fiow and zem!)</label>
+			<input type="checkbox" id="isLittleEndian" oninput="changePrefsEvent(event, '0');"/><label for="isLittleEndian">Little-endian (hi fiow and zem!)</label>
 		</form>
 		<br>
 		<button type="button" id="savejm" onclick="saveJm();">Save map</button>

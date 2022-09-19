@@ -263,6 +263,7 @@ function renderFilename(increase) {
 		if (match == "%n") {
 			if (increase) {
 				filenameIndex.value = indexCopy; // we've used the count, so save it now
+				persist(filenameIndex, "1"); // save index to local storage. rise high
 			}
 			return index;
 		} else if (match == "%d") {
@@ -333,10 +334,36 @@ function processJson(file) {
 }
 */
 
-function changePrefs(e) {
-	
+// is there no better way to just get an input's "value"?
+function getKey(elem) {
+	return elem.type == "checkbox" ? "checked" : "value";
+}
+
+function changePrefsEvent(e, def) {
+	console.log(e, def);
+	return persist(e.target, def);
+}
+
+function persist(elem, def) {
+	const key = getKey(elem);
+	if (elem[key] == def) {
+		localStorage.removeItem(elem.id);
+	} else {
+		localStorage.setItem(elem.id, elem[key]);
+	}
+}
+
+function loadPrefs() {
+	// is it worth trying to avoid destructuring/ecma-whatever-my-browser-supports-but-older-browsers-don't syntax?
+	Object.entries(localStorage).forEach(pair => {
+		const input = document.getElementById(pair[0]);
+		if (!input) return;
+		const key = getKey(input);
+		input[key] = pair[1];
+	});
 }
 
 // We have JS!
 document.getElementById("noscript").remove();
 
+loadPrefs()
