@@ -235,14 +235,22 @@ function renderJm() {
 			throw e;
 		}
 		
-		const jm = {
-			width: width,
-			height: height,
-			dict: dictReal,
-			data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))
-		}
+		// const jm = {
+			// width: width,
+			// height: height,
+			// dict: dictReal,
+			// data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))
+		// }
 		
-		outjm.value = JSON.stringify(jm);
+			const jmStr = `{
+	"width":${width},
+	"height":${height},
+	"dict":${JSON.stringify(dictReal)},
+	"data":"${btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}"
+}`
+		
+		// outjm.value = JSON.stringify(jm);
+		outjm.value = jmStr;
 		outjm.select();
 		sayMessage("Successfully rendered map");
 	}
