@@ -189,7 +189,7 @@ function renderJm() {
 	}
 
 	// Read images and palettes
-	let dict = [];
+	let dict = []; // Array of stringified json objects, each representing one dict entry
 	let undict = {}; // reverse
 	let pixlength = width*height*CHANNELS_PER_PIXEL; // just in case forloop evaluates 2nd expression more than 1ce
 	let bytedata = new Uint8Array(pixlength/CHANNELS_PER_PIXEL*2);
@@ -220,18 +220,31 @@ function renderJm() {
 		}
 	}
 	if (dict.length === 1 && dict[0] == "{}") {
-		// This would a perfectly valid map but let's gawk anyway
+		// This would a perfectly valid map but let's croak anyway
 		sayMessage("Something ain't right, none of the colors in the palette match any of the colors in any of the images");
+		
 	} else {
-		let tempjm = JSON.stringify({width: width, height: height, dict: dict.concat(), data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}).replace(/}"/g,'}').replace(/"{/g,'{').replace(/\\/g,'');
+		let dictReal;
 		try {
-		JSON.parse(tempjm);
+			dictReal = dict.map(JSON.parse);
+		} catch(e) {
+			sayMessage("Dictionary is malformed:");
+			sayMessage(e);
+			console.log(e);
+			console.log(dict);
+			throw e;
+		}
+		
+		const jm = {
+			width: width,
+			height: height,
+			dict: dictReal,
+			data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))
+		}
+		
+		outjm.value = JSON.stringify(jm);
+		outjm.select();
 		sayMessage("Successfully rendered map");
-	} catch(e) {
-		sayMessage("JSON is malformed, check your color names");
-	}
-	outjm.value = tempjm;
-	outjm.select();
 	}
 }
 
