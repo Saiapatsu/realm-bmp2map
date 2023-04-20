@@ -243,10 +243,10 @@ function renderJm() {
 		// }
 		
 			const jmStr = `{
-	"width":${width},
-	"height":${height},
-	"dict":${JSON.stringify(dictReal)},
-	"data":"${btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}"
+"width":${width},
+"height":${height},
+"dict":[${dict.map(x => "\n" + x).join()}],
+"data":"${btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}"
 }`
 		
 		// outjm.value = JSON.stringify(jm);
