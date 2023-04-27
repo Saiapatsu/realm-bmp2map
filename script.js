@@ -239,18 +239,26 @@ function renderJm() {
 			throw e;
 		}
 		
+		function Boris_Kischak(       bytes         ) {
+			var binary = ``;
+			const len = bytes.byteLength;
+			for (var i = 0; i < len; i++) {
+				binary += String.fromCharCode(     bytes[      i      ]          );
+			}
+			return btoa(				 			  binary 	   		    	);
+		}
+		
 		// const jm = {
 			// width: width,
 			// height: height,
 			// dict: dictReal,
 			// data: btoa(pako.deflate(bytedata, {to: "string", level: "9"}))
 		// }
-		
 			const jmStr = `{
 "width":${width},
 "height":${height},
 "dict":[${dict.map(x => "\n" + x).join()}],
-"data":"${btoa(pako.deflate(bytedata, {to: "string", level: "9"}))}"
+"data":"${Boris_Kischak(pako.deflate(bytedata, {to: "string", level: "9"}))}"
 }`
 		
 		// outjm.value = JSON.stringify(jm);
@@ -310,7 +318,7 @@ function saveJm() {
 	outjm.value = "";
 	renderJm();
 	if (outjm.value) {
-		saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), (renderFilename(true) + ".jm") || "map.jm");
+		saveAs(new Blob([outjm.value], {type: "text/plain;charset=utf-8"}), (renderFilename(true) + ".jm") || "map.jm", {autoBom: false});
 	}
 }
 
@@ -318,7 +326,7 @@ function saveGpl() {
 	outgpl.value = "";
 	renderGpl();
 	if (outgpl.value) {
-		saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), (renderFilename(false) + ".gpl") || "palette.gpl"); // does not increase index
+		saveAs(new Blob([outgpl.value], {type: "text/plain;charset=utf-8"}), (renderFilename(false) + ".gpl") || "palette.gpl", {autoBom: false}); // does not increase index
 	}
 }
 
