@@ -187,6 +187,9 @@ function renderJm() {
 	for (var i = 0; i < pregpl.children.length; i++) {
 		palette[parseInt(pregpl.children[i].children[0].value.slice(1), 16)] = pregpl.children[i].children[1].value;
 	}
+	
+	// averts console spam when a color is "not found on the palette"
+	const knownMissing = {};
 
 	// Read images and palettes
 	let dict = []; // Array of stringified json objects, each representing one dict entry
@@ -202,8 +205,9 @@ function renderJm() {
 				let color = pixdata[i] << 16 | pixdata[i+1] << 8 | pixdata[i+2]; // RGB24
 				if (palette[color]) {
 					tile.push(palette[color]);
-				} else {
-					sayMessage("Color " + RGBHex(pixdata[i], pixdata[i+1], pixdata[i+2]) + " not found on the palette, ignored");
+				} else if (!knownMissing[color]) {
+					knownMissing[color] = true;
+					sayMessage(`Color ${RGBHex(pixdata[i], pixdata[i+1], pixdata[i+2])} ${pixdata[i]} ${pixdata[i+1]} ${pixdata[i+2]} not found on the palette, ignored`);
 				}
 			}
 		}
